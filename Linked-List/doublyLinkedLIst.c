@@ -1,110 +1,119 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node
+typedef struct NODE
 {
     int d;
-    struct Node *next;
+    struct NODE *prev;
+    struct NODE *next;
 } N;
+
 N *start = NULL;
 N *temp;
 
 N *createNode(int elem)
 {
-    N *newNode;
-    newNode = (N *)malloc(sizeof(N));
+    N *newNode = (N *)malloc(sizeof(N));
     newNode->d = elem;
     newNode->next = NULL;
+    newNode->prev = NULL;
     return newNode;
 }
 
 void insertionBeg(int elem)
 {
-    N *newNode = createNode(elem);
+    N *ptr = createNode(elem);
     if (start == NULL)
     {
-        start = newNode;
+        start = ptr;
         return;
     }
-    newNode->next = start;
-    start = newNode;
+    ptr->next = start;
+    start->prev = ptr;
+    start = ptr;
 }
 
 void insertionEnd(int elem)
 {
-    N *newNode = createNode(elem);
+    N *ptr = createNode(elem);
     if (start == NULL)
     {
-        start = newNode;
+        start = ptr;
         return;
     }
     for (temp = start; temp->next != NULL; temp = temp->next)
         ;
-    temp->next = newNode;
+    ptr->prev = temp;
+    temp->next = ptr;
 }
 
 void insertionMid(int elem, int pos)
 {
-    N *newNode = createNode(elem);
+    N *ptr = createNode(elem);
     if (pos == 1)
     {
-        newNode->next = start;
-        start = newNode;
+        insertionBeg(elem);
         return;
     }
 
     int c;
-    for (c = 1, temp = start; c < pos - 1 && temp->next != NULL; c++, temp = temp->next)
+    for (c = 1, temp = start; c < pos - 1 && temp != NULL; c++, temp = temp->next)
         ;
 
-    if (c < pos - 1 && temp->next == NULL)
+    if (temp == NULL || (c < pos - 1 && temp->next == NULL))
     {
         printf("Position out of range.\n");
-        free(newNode);
+        free(ptr);
         return;
     }
 
-    newNode->next = temp->next;
-    temp->next = newNode;
+    ptr->next = temp->next;
+    if (temp->next != NULL)
+        temp->next->prev = ptr;
+    temp->next = ptr;
+    ptr->prev = temp;
 }
 void deletionBeg()
 {
     if (start == NULL)
     {
-        printf("List is already empty.\n");
+        printf("List is empty.\n");
         return;
     }
-    temp = start;
+    N *del = start;
     start = start->next;
-    free(temp);
+    start->prev = NULL;
+    free(del);
 }
 void deletionEnd()
 {
     if (start == NULL)
     {
-        printf("List is already empty.\n");
+        printf("List is empty.\n");
         return;
     }
-
-    for (temp = start; (temp->next)->next != NULL; temp = temp->next)
+    for (temp = start; temp->next != NULL; temp = temp->next)
         ;
-    N *del = temp->next;
-    temp->next = NULL;
+    N *del = temp;
+    (temp->prev)->next = NULL;
     free(del);
 }
-void deletionMid(int pos)
+void delettionMid(int pos)
 {
     if (start == NULL)
     {
-        printf("List is already empty.\n");
+        printf("List is empty.\n");
+        return;
+    }
+    if (pos == 1)
+    {
+        deletionBeg();
         return;
     }
     int c;
-    for (c = 1, temp = start; c < pos - 1 && temp->next != NULL; c++, temp = temp->next)
+    for (c = 1, temp = start; c < pos && temp->next != NULL; temp = temp->next)
         ;
-    N *del = temp->next;
-    temp->next = (temp->next)->next;
-    free(del);
+    // todo add logic
 }
 void traverse()
 {
@@ -115,7 +124,7 @@ void traverse()
     }
     for (temp = start; temp != NULL; temp = temp->next)
     {
-        printf("%d -> ", temp->d);
+        printf("%d <-> ", temp->d);
     }
     printf("NULL\n");
 }
@@ -130,9 +139,6 @@ int main()
         printf("2. Insert at End\n");
         printf("3. Insert at Position\n");
         printf("4. Traverse\n");
-        printf("5. Delete from Beginning\n");
-        printf("6. Delete from End\n");
-        printf("7. Delete from Position\n");
         printf("0. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
@@ -156,22 +162,8 @@ int main()
             insertionMid(elem, pos);
             break;
         case 4:
-            printf("Linked List: ");
+            printf("Doubly Linked List: ");
             traverse();
-            break;
-        case 5:
-            deletionBeg();
-            printf("Deleted from beginning.\n");
-            break;
-        case 6:
-            deletionEnd();
-            printf("Deleted from end.\n");
-            break;
-        case 7:
-            printf("Enter position to delete from: ");
-            scanf("%d", &pos);
-            deletionMid(pos);
-            printf("Deleted from position %d.\n", pos);
             break;
         case 0:
             printf("Exiting...\n");
