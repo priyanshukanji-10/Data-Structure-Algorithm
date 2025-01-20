@@ -3,11 +3,10 @@
 #define size 10
 #define Esize 15
 
-char expre[Esize]; // Input expression
-char stk[size];    // Stack to store operators
-int top = -1;      // Stack top pointer
+char expre[Esize];
+char stk[size];
+int top = -1;
 
-// Function to pop the top element from the stack
 char pop()
 {
     if (top <= -1)
@@ -17,11 +16,10 @@ char pop()
     }
     else
     {
-        return stk[top--]; // Return and decrement top
+        return stk[top--];
     }
 }
 
-// Function to push an element onto the stack
 void push(char elem)
 {
     if (top >= (size - 1))
@@ -30,11 +28,10 @@ void push(char elem)
     }
     else
     {
-        stk[++top] = elem; // Increment top and push element
+        stk[++top] = elem;
     }
 }
 
-// Function to check the precedence of an operator
 int chkprece(char opr)
 {
     switch (opr)
@@ -61,22 +58,17 @@ int main()
     printf("Enter an infix expression: ");
     scanf("%s", expre);
 
-    // Loop through each character in the infix expression
     for (i = 0; expre[i] != '\0'; i++)
     {
-        // If the character is an operand (a-z), output it directly
         if (expre[i] >= 'a' && expre[i] <= 'z')
         {
-
             pfix[j] = expre[i];
             j++;
         }
-        // If the character is a left parenthesis, push it onto the stack
         else if (expre[i] == '(')
         {
             push('(');
         }
-        // If the character is a right parenthesis, pop and output until '(' is found
         else if (expre[i] == ')')
         {
             while (stk[top] != '(' && top > -1)
@@ -84,21 +76,19 @@ int main()
                 pfix[j] = pop();
                 j++;
             }
-            pop(); // Discard the '('
+            pop();
         }
-        // If the character is an operator
         else
         {
             while (top != -1 && chkprece(expre[i]) <= chkprece(stk[top]))
             {
                 pfix[j] = pop();
-                j++; // Pop operators with higher or equal precedence
+                j++;
             }
-            push(expre[i]); // Push the current operator onto the stack
+            push(expre[i]);
         }
     }
 
-    // Pop and output all remaining operators in the stack
     while (top > -1)
     {
         pfix[j] = pop();

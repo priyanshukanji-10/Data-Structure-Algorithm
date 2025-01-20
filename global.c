@@ -1,17 +1,94 @@
 #include <stdio.h>
+#define size 10
+#define Isize 15
 
-int factorial(int n)
+char ifix[Isize];
+char stk[size];
+int top = -1;
+
+void push(char elem)
 {
-    if (n == 0)
-        return 1; // Base case: 0! = 1
+    if (top < size - 1)
+    {
+        top++;
+        stk[top] = elem;
+    }
     else
-        return n * factorial(n - 1); // Recursive call
+    {
+        printf("Stack overflow");
+    }
 }
 
-int main()
+int pop()
 {
-    int num = 5;
-    printf("Factorial of %d is %d\n", num, factorial(num));
-    return 0;
+    if (top <= -1)
+    {
+        return -1;
+    }
+    else
+    {
+        return stk[top--];
+    }
 }
-// 5*4*fact(3)*fact()
+
+int chkprece(char x)
+{
+    switch (x)
+    {
+    case '^':
+        return 3;
+    case '%':
+    case '*':
+    case '/':
+        return 2;
+    case '+':
+    case '-':
+        return 1;
+    default:
+        return 0;
+    }
+}
+
+void main()
+{
+    char pfix[15];
+    printf("Enter Infix exp:");
+    scanf("%s", ifix);
+    int j = 0;
+    int i = 0;
+    while (ifix[i] != 0)
+    {
+        if (ifix[i] >= 97 && ifix[i] <= 122)
+        {
+            pfix[j] = ifix[i];
+            j++;
+        }
+        else if (ifix[i] == '(')
+        {
+            push('(');
+        }
+        else if (ifix[i] == ')')
+        {
+            while (top > -1 && stk[top] != '(')
+            {
+                pfix[j++] = pop();
+            }
+            pop();
+        }
+        else
+        {
+            while (top != -1 && chkprece(ifix[i]) < chkprece(stk[top]))
+            {
+                pfix[j++] = pop();
+            }
+            push(ifix[i]);
+        }
+        i++;
+    }
+    while (top > -1)
+    {
+        pfix[j++] = pop();
+    }
+    pfix[j] = '\0';
+    printf("%s", pfix);
+}

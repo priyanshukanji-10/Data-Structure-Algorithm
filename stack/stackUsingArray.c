@@ -1,58 +1,67 @@
 #include <stdio.h>
-
-int stack[7];
+#define size 5
+int stk[size];
 int top = -1;
 
 void push(int elem)
 {
-    if (top >= 6)
+    if (top < size - 1)
     {
-        printf("Stack overflow!!\n");
+        top++;
+        stk[top] = elem;
     }
     else
     {
-        top++;
-        stack[top] = elem;
+        printf("Stack overflow\n");
     }
 }
-void pop()
+
+int pop()
 {
     if (top <= -1)
     {
-        printf("Stack underflow!!\n");
+        printf("Stack is empty\n");
+        return -1;
     }
     else
     {
-        printf("%d\n", stack[top]); // return stack[top]
+        int a = stk[top];
         top--;
+        return a;
     }
 }
+
 int main()
 {
-    int sig, elem;
+    int choice, elem;
     do
     {
-        printf("Enter signal to perform task:\n 1 for push \n 2 for pop \n 0 to End\n");
-        scanf("%d", &sig);
-        switch (sig)
+        printf("\nMenu:\n");
+        printf("1. Push\n");
+        printf("2. Pop\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice)
         {
         case 1:
-            printf("Enter element to push in stack:");
+            printf("Enter element to push: ");
             scanf("%d", &elem);
             push(elem);
             break;
         case 2:
-            printf("poping last element\n");
-            pop();
+            elem = pop();
+            if (elem != -1)
+                printf("Popped element: %d\n", elem);
             break;
-
+        case 3:
+            printf("Exiting...\n");
+            break;
         default:
-            if (sig != 0)
-            {
-                printf("Invalid signal\n");
-            }
-
-            break;
+            printf("Invalid choice. Try again.\n");
         }
-    } while (sig != 0);
+    } while (choice != 3);
+
+    return 0;
 }

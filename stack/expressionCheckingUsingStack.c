@@ -2,11 +2,12 @@
 
 char stack[20];
 int top = -1;
-void push(int elem)
+
+void push(char elem)
 {
     if (top >= 19)
     {
-        printf("Stack overflow");
+        printf("Stack overflow\n");
     }
     else
     {
@@ -14,6 +15,7 @@ void push(int elem)
         stack[top] = elem;
     }
 }
+
 int pop()
 {
     if (top <= -1)
@@ -26,12 +28,14 @@ int pop()
         return 1;
     }
 }
+
 int main()
 {
     char ar1[20];
     char arr[20];
     int i, j = 0;
-    printf("Enter expression:");
+
+    printf("Enter expression: ");
     scanf("%s", ar1);
 
     for (i = 0; ar1[i] != '\0'; i++)
@@ -40,10 +44,6 @@ int main()
         {
             arr[j] = ar1[i];
             j++;
-        }
-        else
-        {
-            continue;
         }
     }
     arr[j] = '\0';
@@ -56,22 +56,22 @@ int main()
         }
         else if (arr[i] == ')')
         {
-
             if (pop() == -1)
             {
-                printf("Mis-match");
-                break;
+                printf("Mismatch\n");
+                return 0;
             }
         }
     }
 
-    if (arr[i] == '\0' && top == -1)
+    if (top == -1)
     {
-        printf("Match");
+        printf("Match\n");
     }
     else
     {
-        printf("Mis-match");
+        printf("Mismatch\n");
     }
-    return 1;
+
+    return 0;
 }
